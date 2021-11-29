@@ -83,4 +83,25 @@ server.delete('/api/users/:id', async (req, res) => {
 // updates the user with the specified `id` using data from the `request body`
 // returns the modified user
 
+server.put('/api/users/:id', async (req, res) => {
+  const { id } = req.params;
+  const { body } = req;
+
+  try {
+    if (!body.name || !body.bio) {
+      res.status(400).json({ message: 'Please provide name and bio for the user' });
+    } else {
+      const updated = await Users.update(id, body);
+
+      if (!updated) {
+        res.status(404).json({ message: 'The user with the specified ID does not exist' });
+      } else {
+        res.json(updated);
+      }
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'The user information could not be modified' });
+  }
+});
+
 module.exports = server;
